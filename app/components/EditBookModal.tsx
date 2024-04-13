@@ -3,15 +3,21 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import Modal from "./Modal";
 import Input from "./Input";
 import { useAppDispatch } from "../redux/hooks";
-import { add } from "../redux/book/bookSlice";
+import { BookState, edit } from "../redux/book/bookSlice";
 
-interface AddBookModalProps {
+interface EditBookModalProps {
   isOpen?: boolean;
   onClose: () => void;
+  book: BookState;
 }
 
-const AddBookModal: React.FC<AddBookModalProps> = ({ isOpen, onClose }) => {
+const EditBookModal: React.FC<EditBookModalProps> = ({
+  isOpen,
+  onClose,
+  book,
+}) => {
   const dispatch = useAppDispatch();
+  console.log(book);
   const {
     register,
     handleSubmit,
@@ -19,14 +25,16 @@ const AddBookModal: React.FC<AddBookModalProps> = ({ isOpen, onClose }) => {
     formState: { errors },
   } = useForm<FieldValues>({
     defaultValues: {
-      name: "",
-      price: "",
-      category: "",
-      description: "",
+      id: book.id,
+      name: book.name,
+      price: book.price,
+      category: book.category,
+      description: book.description,
     },
   });
   const onSubmit: SubmitHandler<any> = (data) => {
-    dispatch(add(data));
+    console.log(data);
+    dispatch(edit(data));
     onClose();
   };
   return (
@@ -39,10 +47,10 @@ const AddBookModal: React.FC<AddBookModalProps> = ({ isOpen, onClose }) => {
     >
       <div className="text-left">
         <div className="text-base font-semibold leading-7 text-gray-900">
-          Add a new book
+          Edit the book
         </div>
         <p className="mt-1 text-sm leading-6 text-gray-600">
-          Add a new book with details.
+          Edit the book with details.
         </p>
 
         <form
@@ -77,7 +85,7 @@ const AddBookModal: React.FC<AddBookModalProps> = ({ isOpen, onClose }) => {
               Cancel
             </Button>
             <Button normal type="submit">
-              Add
+              Edit
             </Button>
           </div>
         </form>
@@ -86,4 +94,4 @@ const AddBookModal: React.FC<AddBookModalProps> = ({ isOpen, onClose }) => {
   );
 };
 
-export default AddBookModal;
+export default EditBookModal;

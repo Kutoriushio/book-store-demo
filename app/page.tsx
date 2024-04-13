@@ -4,16 +4,17 @@ import { useState } from "react";
 import Button from "./components/Button";
 import AddBookModal from "./components/AddBookModal";
 import DeleteModal from "./components/DeleteModal";
-import { useAppDispatch, useAppSelector } from "./redux/hooks";
+import { useAppSelector } from "./redux/hooks";
 import { BookState, remove } from "./redux/book/bookSlice";
+import EditBookModal from "./components/EditBookModal";
 
 export default function Home() {
   const books = useAppSelector((state) => state.book.books);
   const [currentBook, setCurrentBook] = useState<BookState>();
-  const dispatch = useAppDispatch();
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   return (
     <div className="h-screen w-screen bg-red-200">
       <AddBookModal
@@ -25,6 +26,13 @@ export default function Home() {
         onClose={() => setIsDeleteModalOpen(false)}
         book={currentBook!}
       />
+      {isEditModalOpen && (
+        <EditBookModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          book={currentBook!}
+        />
+      )}
       <div className="flex justify-center pt-10">
         <div>
           <div className="flex flex-col justify-center items-center gap-3">
@@ -44,8 +52,16 @@ export default function Home() {
             </thead>
             <tbody className="border-b border-neutral-200 dark:border-white/10">
               {books.map((book) => (
-                <tr key={book.name}>
-                  <td className="px-6 py-4">{book.name}</td>
+                <tr key={book.id}>
+                  <td
+                    className="px-6 py-4 hover:text-sky-500 hover:cursor-pointer hover:underline"
+                    onClick={() => {
+                      setIsEditModalOpen(true);
+                    }}
+                    onMouseOver={() => setCurrentBook(book)}
+                  >
+                    {book.name}
+                  </td>
                   <td className="px-6 py-4">${book.price}</td>
                   <td className="px-6 py-4">{book.category}</td>
                   <td className="px-6 py-4">

@@ -39,7 +39,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ isOpen, onClose, book }) => {
         <Button
           danger
           onClick={() => {
-            dispatch(remove(book.name));
+            dispatch(remove(book.id));
             onClose();
           }}
         >

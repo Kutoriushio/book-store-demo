@@ -5,16 +5,19 @@ interface ButtonProps {
   onClick?: () => void;
   normal?: boolean;
   danger?: boolean;
+  type?: "button" | "submit" | "reset";
 }
 const Button: React.FC<ButtonProps> = ({
   children,
   onClick,
   normal,
   danger,
+  type,
 }) => {
   return (
     <button
       onClick={onClick}
+      type={type}
       className={clsx(
         `flex justify-center rounded-md px-3 py-2 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
       `,
