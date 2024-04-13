@@ -4,6 +4,8 @@ import Modal from "./Modal";
 import Input from "./Input";
 import { useAppDispatch } from "../redux/hooks";
 import { add } from "../redux/book/bookSlice";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 
 interface AddBookModalProps {
   isOpen?: boolean;
@@ -12,12 +14,22 @@ interface AddBookModalProps {
 
 const AddBookModal: React.FC<AddBookModalProps> = ({ isOpen, onClose }) => {
   const dispatch = useAppDispatch();
+  const schema = yup.object({
+    name: yup.string().required("Name is required."),
+    price: yup
+      .number()
+      .typeError("Price must be a number.")
+      .positive("The price should be positive.")
+      .required("Price is required."),
+    category: yup.string().required("Category is required."),
+  });
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm<FieldValues>({
+    resolver: yupResolver<FieldValues>(schema),
     defaultValues: {
       name: "",
       price: "",
@@ -28,6 +40,7 @@ const AddBookModal: React.FC<AddBookModalProps> = ({ isOpen, onClose }) => {
   const onSubmit: SubmitHandler<any> = (data) => {
     dispatch(add(data));
     onClose();
+    reset();
   };
   return (
     <Modal
@@ -52,19 +65,24 @@ const AddBookModal: React.FC<AddBookModalProps> = ({ isOpen, onClose }) => {
           <label className="block text-sm font-medium leading-6 text-gray-900">
             Name
           </label>
-          <Input id="name" register={register} />
+          <Input id="name" register={register} errors={errors} />
           <label className="block text-sm font-medium leading-6 text-gray-900">
             Price
           </label>
-          <Input id="price" register={register} />
+          <Input id="price" register={register} errors={errors} />
           <label className="block text-sm font-medium leading-6 text-gray-900">
             Category
           </label>
-          <Input id="category" register={register} />
+          <Input id="category" register={register} errors={errors} />
           <label className="block text-sm font-medium leading-6 text-gray-900">
             Description
           </label>
-          <Input id="description" register={register} />
+          <textarea
+            {...register("description")}
+            rows={3}
+            cols={10}
+            className="block rounded-md w-full border-0 ring-1 ring-inset ring-gray-300 p-1.5 text-gray-900 shadow-sm placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+          />
           <hr className="mt-5" />
           <div className="flex mt-6 justify-end items-center gap-6">
             <Button
