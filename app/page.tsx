@@ -4,13 +4,13 @@ import { useState } from "react";
 import Button from "./components/Button";
 import AddBookModal from "./components/AddBookModal";
 import DeleteModal from "./components/DeleteModal";
+import { useAppDispatch, useAppSelector } from "./redux/hooks";
+import { BookState, remove } from "./redux/book/bookSlice";
 
 export default function Home() {
-  const [books, setBooks] = useState([
-    { id: 1, name: "Book 1", price: 10, category: "Fiction" },
-    { id: 2, name: "Book 2", price: 15, category: "Non-Fiction" },
-    // Add more books as needed
-  ]);
+  const books = useAppSelector((state) => state.book.books);
+  const [currentBook, setCurrentBook] = useState<BookState>();
+  const dispatch = useAppDispatch();
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -23,6 +23,7 @@ export default function Home() {
       <DeleteModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
+        book={currentBook!}
       />
       <div className="flex justify-center pt-10">
         <div>
@@ -43,12 +44,18 @@ export default function Home() {
             </thead>
             <tbody className="border-b border-neutral-200 dark:border-white/10">
               {books.map((book) => (
-                <tr key={book.id}>
+                <tr key={book.name}>
                   <td className="px-6 py-4">{book.name}</td>
                   <td className="px-6 py-4">${book.price}</td>
                   <td className="px-6 py-4">{book.category}</td>
                   <td className="px-6 py-4">
-                    <Button danger onClick={() => setIsDeleteModalOpen(true)}>
+                    <Button
+                      danger
+                      onClick={() => {
+                        setIsDeleteModalOpen(true);
+                        setCurrentBook(book);
+                      }}
+                    >
                       Delete
                     </Button>
                   </td>

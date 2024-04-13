@@ -4,13 +4,17 @@ import Button from "@/app/components/Button";
 import { Dialog } from "@headlessui/react";
 import { FiAlertTriangle } from "react-icons/fi";
 import Modal from "./Modal";
+import { useAppDispatch } from "../redux/hooks";
+import { BookState, remove } from "../redux/book/bookSlice";
 
 interface DeleteModalProps {
   isOpen?: boolean;
   onClose: () => void;
+  book: BookState;
 }
 
-const DeleteModal: React.FC<DeleteModalProps> = ({ isOpen, onClose }) => {
+const DeleteModal: React.FC<DeleteModalProps> = ({ isOpen, onClose, book }) => {
+  const dispatch = useAppDispatch();
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className="sm:flex sm:items-start">
@@ -32,7 +36,15 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ isOpen, onClose }) => {
       </div>
       <div className="mt-5 sm:mt-4 flex sm:justify-end justify-center gap-5 sm:gap-3">
         <Button onClick={onClose}>Cancel</Button>
-        <Button danger>Delete</Button>
+        <Button
+          danger
+          onClick={() => {
+            dispatch(remove(book.name));
+            onClose();
+          }}
+        >
+          Delete
+        </Button>
       </div>
     </Modal>
   );

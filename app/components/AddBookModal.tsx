@@ -1,8 +1,9 @@
 import Button from "@/app/components/Button";
-import React, { useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import Modal from "./Modal";
 import Input from "./Input";
+import { useAppDispatch } from "../redux/hooks";
+import { add } from "../redux/book/bookSlice";
 
 interface AddBookModalProps {
   isOpen?: boolean;
@@ -10,8 +11,7 @@ interface AddBookModalProps {
 }
 
 const AddBookModal: React.FC<AddBookModalProps> = ({ isOpen, onClose }) => {
-  const [isLoading, setIsLoading] = useState(false);
-
+  const dispatch = useAppDispatch();
   const {
     register,
     handleSubmit,
@@ -25,7 +25,10 @@ const AddBookModal: React.FC<AddBookModalProps> = ({ isOpen, onClose }) => {
       description: "",
     },
   });
-
+  const onSubmit: SubmitHandler<any> = (data) => {
+    dispatch(add(data));
+    onClose();
+  };
   return (
     <Modal
       isOpen={isOpen}
@@ -42,7 +45,10 @@ const AddBookModal: React.FC<AddBookModalProps> = ({ isOpen, onClose }) => {
           Add a new book with details.
         </p>
 
-        <form className="mt-5 flex flex-col gap-2">
+        <form
+          className="mt-5 flex flex-col gap-2"
+          onSubmit={handleSubmit(onSubmit)}
+        >
           <label className="block text-sm font-medium leading-6 text-gray-900">
             Name
           </label>
