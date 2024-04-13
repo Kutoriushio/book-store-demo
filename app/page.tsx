@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import Button from "./components/Button";
 import AddBookModal from "./components/AddBookModal";
 import DeleteModal from "./components/DeleteModal";
 import { useAppSelector } from "./redux/hooks";
-import { BookState, remove } from "./redux/book/bookSlice";
+import { BookState } from "./redux/book/bookSlice";
 import EditBookModal from "./components/EditBookModal";
+import { IoAdd } from "react-icons/io5";
+import { RiDeleteBinLine } from "react-icons/ri";
+import { MdEdit } from "react-icons/md";
 
 export default function Home() {
   const books = useAppSelector((state) => state.book.books);
@@ -16,7 +18,7 @@ export default function Home() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   return (
-    <div className="h-screen w-screen bg-red-200">
+    <div className="flex justify-center bg-gray-300">
       <AddBookModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
@@ -33,16 +35,17 @@ export default function Home() {
           book={currentBook!}
         />
       )}
-      <div className="flex justify-center pt-10">
-        <div>
-          <div className="flex flex-col justify-center items-center gap-3">
-            <h1 className="text-3xl">Bookstore</h1>
-            <Button normal onClick={() => setIsAddModalOpen(true)}>
-              Add a new book
-            </Button>
+      <div className="flex justify-center border border-gray-200 bg-gray-200 rounded-lg h-screen">
+        <div className="p-16">
+          <div className="flex items-center gap-3 justify-center w-full">
+            <h1 className="text-4xl font-bold">Bookstore</h1>
+            <IoAdd
+              onClick={() => setIsAddModalOpen(true)}
+              className="border border-black rounded-full h-6 w-6 cursor-pointer mt-1 hover:opacity-50"
+            />
           </div>
-          <table className="min-w-full text-left text-sm font-light text-surface dark:text-white">
-            <thead className="border-b border-neutral-200 font-medium dark:border-white/10">
+          <table className="min-w-full text-center text-sm font-light text-surface dark:text-white border border-neutral-400 mt-5">
+            <thead className="border-b border-neutral-400 font-medium">
               <tr>
                 <th className="px-6 py-4">Name</th>
                 <th className="px-6 py-4">Price</th>
@@ -50,22 +53,22 @@ export default function Home() {
                 <th className="px-6 py-4">Action</th>
               </tr>
             </thead>
-            <tbody className="border-b border-neutral-200 dark:border-white/10">
+            <tbody className="">
               {books.map((book) => (
-                <tr key={book.id}>
+                <tr key={book.id} className="border-b border-neutral-400">
                   <td
                     className="px-6 py-4 hover:text-sky-500 hover:cursor-pointer hover:underline"
                     onClick={() => {
                       setIsEditModalOpen(true);
+                      setCurrentBook(book);
                     }}
-                    onMouseOver={() => setCurrentBook(book)}
                   >
                     {book.name}
                   </td>
                   <td className="px-6 py-4">${book.price}</td>
                   <td className="px-6 py-4">{book.category}</td>
                   <td className="px-6 py-4">
-                    <Button
+                    {/* <Button
                       danger
                       onClick={() => {
                         setIsDeleteModalOpen(true);
@@ -73,7 +76,23 @@ export default function Home() {
                       }}
                     >
                       Delete
-                    </Button>
+                    </Button> */}
+                    <div className="flex justify-center  gap-3">
+                      <RiDeleteBinLine
+                        onClick={() => {
+                          setIsDeleteModalOpen(true);
+                          setCurrentBook(book);
+                        }}
+                        className="cursor-pointer text-red-500 hover:opacity-70"
+                      />
+                      <MdEdit
+                        className="cursor-pointer hover:opacity-70"
+                        onClick={() => {
+                          setIsEditModalOpen(true);
+                          setCurrentBook(book);
+                        }}
+                      />
+                    </div>
                   </td>
                 </tr>
               ))}
