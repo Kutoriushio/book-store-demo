@@ -1,14 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import AddBookModal from "./components/AddBookModal";
 import DeleteModal from "./components/DeleteModal";
 import { useAppSelector } from "./redux/hooks";
 import { BookState } from "./redux/book/bookSlice";
-import EditBookModal from "./components/EditBookModal";
 import { IoAdd } from "react-icons/io5";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { MdEdit } from "react-icons/md";
+import BookModal from "./components/BookModal";
 
 export default function Home() {
   const books = useAppSelector((state) => state.book.books);
@@ -19,9 +18,10 @@ export default function Home() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   return (
     <div className="flex justify-center bg-gray-300">
-      <AddBookModal
+      <BookModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
+        action="Add"
       />
       <DeleteModal
         isOpen={isDeleteModalOpen}
@@ -29,10 +29,11 @@ export default function Home() {
         book={currentBook!}
       />
       {isEditModalOpen && (
-        <EditBookModal
+        <BookModal
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
           book={currentBook!}
+          action="Edit"
         />
       )}
       <div className="flex justify-center border border-gray-200 bg-gray-200 rounded-lg h-screen">
@@ -68,15 +69,6 @@ export default function Home() {
                   <td className="px-6 py-4">${book.price}</td>
                   <td className="px-6 py-4">{book.category}</td>
                   <td className="px-6 py-4">
-                    {/* <Button
-                      danger
-                      onClick={() => {
-                        setIsDeleteModalOpen(true);
-                        setCurrentBook(book);
-                      }}
-                    >
-                      Delete
-                    </Button> */}
                     <div className="flex justify-center  gap-3">
                       <RiDeleteBinLine
                         onClick={() => {

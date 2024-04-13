@@ -3,21 +3,28 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import Modal from "./Modal";
 import Input from "./Input";
 import { useAppDispatch } from "../redux/hooks";
-import { BookState, edit } from "../redux/book/bookSlice";
+import { BookState, add, edit } from "../redux/book/bookSlice";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
-interface EditBookModalProps {
+interface AddBookModalProps {
   isOpen?: boolean;
   onClose: () => void;
-  book: BookState;
+  action: "Add" | "Edit";
+  book?: BookState;
 }
 
-const EditBookModal: React.FC<EditBookModalProps> = ({
+const AddBookModal: React.FC<AddBookModalProps> = ({
   isOpen,
   onClose,
+  action,
   book,
 }) => {
+  const title = action == "Add" ? "Add a new book" : "Edit the book";
+  const message =
+    action == "Add"
+      ? "Add a new book with details."
+      : "Edit the book with details.";
   const dispatch = useAppDispatch();
   const schema = yup.object({
     name: yup.string().required("Name is required."),
@@ -27,7 +34,6 @@ const EditBookModal: React.FC<EditBookModalProps> = ({
       .positive("The price should be positive.")
       .required("Price is required."),
     category: yup.string().required("Category is required."),
-    description: yup.string().required("Description is required."),
   });
   const {
     register,
@@ -37,17 +43,17 @@ const EditBookModal: React.FC<EditBookModalProps> = ({
   } = useForm<FieldValues>({
     resolver: yupResolver<FieldValues>(schema),
     defaultValues: {
-      id: book.id,
-      name: book.name,
-      price: book.price,
-      category: book.category,
-      description: book.description,
+      id: book?.id,
+      name: book?.name,
+      price: book?.price,
+      category: book?.category,
+      description: book?.description,
     },
   });
   const onSubmit: SubmitHandler<any> = (data) => {
-    console.log(data);
-    dispatch(edit(data));
+    action == "Add" ? dispatch(add(data)) : dispatch(edit(data));
     onClose();
+    reset();
   };
   return (
     <Modal
@@ -59,11 +65,9 @@ const EditBookModal: React.FC<EditBookModalProps> = ({
     >
       <div className="text-left">
         <div className="text-base font-semibold leading-7 text-gray-900">
-          Edit the book
+          {title}
         </div>
-        <p className="mt-1 text-sm leading-6 text-gray-600">
-          Edit the book with details.
-        </p>
+        <p className="mt-1 text-sm leading-6 text-gray-600">{message}</p>
 
         <form
           className="mt-5 flex flex-col gap-2"
@@ -102,7 +106,7 @@ const EditBookModal: React.FC<EditBookModalProps> = ({
               Cancel
             </Button>
             <Button normal type="submit">
-              Edit
+              {action}
             </Button>
           </div>
         </form>
@@ -111,4 +115,4 @@ const EditBookModal: React.FC<EditBookModalProps> = ({
   );
 };
 
-export default EditBookModal;
+export default AddBookModal;
